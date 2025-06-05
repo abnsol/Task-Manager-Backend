@@ -1,98 +1,232 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Task Manager Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is a simple REST API for managing tasks, built as part of an internship entrance challenge for a Backend Developer role.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Technologies Used
 
-## Description
+- **Framework:** [NestJS](https://nestjs.com/)
+- **Database:** [PostgreSQL](https://www.postgresql.org/) (Dockerized for local development)
+- **ORM:** [Prisma ORM](https://www.prisma.io/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Validation:** `class-validator` and `class-transformer`
+- **Documentation:** [Swagger/OpenAPI](https://swagger.io/)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Features
 
-## Project setup
+- **View a list of tasks:** `GET /api/tasks`
+- **Add a new task:** `POST /api/tasks`
+- **Mark a task as completed:** `PUT /api/tasks/:id`
+- **Delete a task:** `DELETE /api/tasks/:id`
+- **Input Validation:** Ensures data integrity for task creation.
+- **Comprehensive Error Handling:** Returns appropriate HTTP status codes (e.g., 404 Not Found, 400 Bad Request) with descriptive messages.
 
-```bash
-$ npm install
-```
+## Setup & Running Locally
 
-## Compile and run the project
+### Prerequisites
 
-```bash
-# development
-$ npm run start
+- Node.js (LTS version recommended)
+- npm (or yarn)
+- Docker and Docker Compose (for running PostgreSQL locally)
+- NestJS CLI (`npm i -g @nestjs/cli`)
 
-# watch mode
-$ npm run start:dev
+### Steps
 
-# production mode
-$ npm run start:prod
-```
+1.  **Clone the repository:**
 
-## Run tests
+    ```bash
+    git clone [https://github.com/abnsol/Task-Manager-Backend.git](https://github.com/abnsol/Task-Manager-Backend.git)
+    cd task-manager-backend
+    ```
 
-```bash
-# unit tests
-$ npm run test
+2.  **Install dependencies:**
 
-# e2e tests
-$ npm run test:e2e
+    ```bash
+    npm install
+    ```
 
-# test coverage
-$ npm run test:cov
-```
+3.  **Set up PostgreSQL with Docker:**
+    Create a `docker-compose.yml` file in the project root (if not already present):
 
-## Deployment
+    ```yaml
+    # docker-compose.yml
+    version: '3.8'
+    services:
+      db:
+        image: postgres:15-alpine
+        restart: always
+        environment:
+          POSTGRES_DB: your_db_name # IMPORTANT: Replace with your actual database name
+          POSTGRES_USER: your_db_user # IMPORTANT: Replace with your actual user
+          POSTGRES_PASSWORD: your_db_password # IMPORTANT: Replace with a strong password
+        ports:
+          - '5432:5432'
+        volumes:
+          - db_data:/var/lib/postgresql/data
+    volumes:
+      db_data:
+    ```
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+    Start the database container:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+    ```bash
+    docker-compose up -d
+    ```
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+4.  **Configure Environment Variables:**
+    Create a `.env` file in the project root and add your database connection string. Make sure the credentials match those in `docker-compose.yml`.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+    ```dotenv
+    # .env
+    DATABASE_URL="postgresql://your_db_user:your_db_password@localhost:5432/your_db_name?schema=public"
+    ```
 
-## Resources
+5.  **Run Prisma Migrations:**
+    This will create the `tasks` table in your database.
 
-Check out a few resources that may come in handy when working with NestJS:
+    ```bash
+    npx prisma migrate dev --name init
+    ```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+6.  **Start the API in development mode:**
+    ```bash
+    npm run start:dev
+    ```
+    The API will be running at `http://localhost:3000`.
 
-## Support
+## API Endpoints
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+All endpoints are prefixed with `/api`.
 
-## Stay in touch
+### 1. Get all tasks
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **URL:** `/api/tasks`
+- **Method:** `GET`
+- **Response:**
+  ```json
+  [
+    {
+      "id": 1,
+      "title": "Buy groceries",
+      "completed": false,
+      "createdAt": "2023-10-27T10:00:00.000Z",
+      "updatedAt": "2023-10-27T10:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "title": "Read a book",
+      "completed": true,
+      "createdAt": "2023-10-27T11:00:00.000Z",
+      "updatedAt": "2023-10-27T11:00:00.000Z"
+    }
+  ]
+  ```
 
-## License
+### 2. Get a single task by ID
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- **URL:** `/api/tasks/:id`
+- **Method:** `GET`
+- **Example:** `/api/tasks/1`
+- **Response (Success):**
+  ```json
+  {
+    "id": 1,
+    "title": "Buy groceries",
+    "completed": false,
+    "createdAt": "2023-10-27T10:00:00.000Z",
+    "updatedAt": "2023-10-27T10:00:00.000Z"
+  }
+  ```
+- **Response (Not Found - 404):**
+  ```json
+  {
+    "statusCode": 404,
+    "message": "Task with ID 99 not found",
+    "error": "Not Found"
+  }
+  ```
+
+### 3. Add a new task
+
+- **URL:** `/api/tasks`
+- **Method:** `POST`
+- **Request Body (JSON):**
+  ```json
+  {
+    "title": "New task item"
+  }
+  ```
+- **Response (Success - 201 Created):**
+  ```json
+  {
+    "id": 3,
+    "title": "New task item",
+    "completed": false,
+    "createdAt": "2023-10-27T12:00:00.000Z",
+    "updatedAt": "2023-10-27T12:00:00.000Z"
+  }
+  ```
+- **Response (Validation Error - 400 Bad Request):**
+  ```json
+  {
+    "statusCode": 400,
+    "message": ["title should not be empty", "title must be a string"],
+    "error": "Bad Request"
+  }
+  ```
+
+### 4. Mark a task as completed (or update any field)
+
+- **URL:** `/api/tasks/:id`
+- **Method:** `PUT`
+- **Example:** `/api/tasks/1`
+- **Request Body (JSON):**
+  ```json
+  {
+    "completed": true
+  }
+  ```
+- **Response (Success):**
+  ```json
+  {
+    "id": 1,
+    "title": "Buy groceries",
+    "completed": true,
+    "createdAt": "2023-10-27T10:00:00.000Z",
+    "updatedAt": "2023-10-27T13:00:00.000Z"
+  }
+  ```
+- **Response (Not Found - 404):**
+  ```json
+  {
+    "statusCode": 404,
+    "message": "Task with ID 99 not found",
+    "error": "Not Found"
+  }
+  ```
+
+### 5. Delete a task
+
+- **URL:** `/api/tasks/:id`
+- **Method:** `DELETE`
+- **Example:** `/api/tasks/1`
+- **Response (Success - 204 No Content):** (No body content)
+- **Response (Not Found - 404):**
+  ```json
+  {
+    "statusCode": 404,
+    "message": "Task with ID 99 not found",
+    "error": "Not Found"
+  }
+  ```
+
+## API Documentation (Swagger)
+
+Once the application is running, you can access the interactive API documentation at:
+`http://localhost:3000/api-docs`
+
+## Bonus Features Implemented
+
+- **Input Validation:** Ensured `title` is not empty and is a string for `CreateTaskDto`.
+- **Proper Error Handling:** Utilizes NestJS's exception layer for `NotFoundException` and `BadRequestException` (from `ValidationPipe`).
+- **Database Persistence:** Uses PostgreSQL with Prisma ORM for data storage.
+- **API Documentation:** Integrated Swagger for easy API exploration.
