@@ -1,0 +1,18 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: dev_db # Replace with your preferred database name
+      POSTGRES_USER: main_user # Replace with your preferred user
+      POSTGRES_PASSWORD: password123 # Replace with a strong password
+    ports:
+      - "5432:5432" # Host:Container
+    volumes:
+      - db_data:/var/lib/postgresql/data # Persistent data volume
+
+volumes:
+  db_data:
